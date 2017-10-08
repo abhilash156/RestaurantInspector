@@ -31,10 +31,8 @@ public class CommentAnalyzer {
         ToneAnalysis tone = service.tone(toneOptions).execute();
         //System.out.println(tone.toString());
 
-        Reader reader = new StringReader(tone.toString());
-        JsonReader jReader = new JsonReader(reader);
         JsonParser jParser = new JsonParser();
-        JsonObject jObject = (JsonObject) jParser.parse(jReader);
+        JsonObject jObject = (JsonObject) jParser.parse(tone.toString());
         JsonArray emotionTones = jObject.getAsJsonObject("document_tone").getAsJsonArray("tone_categories").get(0).getAsJsonObject().getAsJsonArray("tones");
         System.out.println("Hello");
         for (JsonElement j : emotionTones) {

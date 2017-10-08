@@ -9,16 +9,20 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class BostonFoodInspection {
+public class FourSquareAPI {
+    private static final String CLIENT_ID = "COCCBEW3ED41FVPLQQT2VAQTKH5W0I23GZT5IKAKTFRCNDV1";
+    private static final String CLIENT_SECRET = "VWL23BGYSMP4HR2BVJQH3JHVDAYBEO41VYU5Z1UOP4EUNF0R";
+
     public static void main(String[] args) {
-        BostonFoodInspection bostonFoodInspection = new BostonFoodInspection();
-        bostonFoodInspection.fetchData();
+        FourSquareAPI fourSquareAPI = new FourSquareAPI();
+        fourSquareAPI.getRestaurants("Bar", "Boston");
     }
 
-    public void fetchData() {
-
+    public void getRestaurants(String restaurantType, String city) {
         try {
-            URL url = new URL("http://data.cityofboston.gov/resource/427a-3cn5.json?$limit=10");
+            URL url = new URL("https://api.foursquare.com/v2/venues/search?client_id=" + CLIENT_ID + "&client_secret="
+                    + CLIENT_SECRET + "&ll=42.3442399,-71.0310313&v=20171006&query=" + restaurantType +
+                    "&radius=2000&limit=10");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
@@ -36,19 +40,12 @@ public class BostonFoodInspection {
                 nextLine = br.readLine();
             }
             JsonParser jsonParser = new JsonParser();
-            JsonArray jsonArray = (JsonArray) jsonParser.parse(output.toString());
-            System.out.println(jsonArray);
-            /*JsonArray jsonArray = jsonObject.getAsJsonObject("response").getAsJsonArray("venues");*/
+            JsonObject jsonObject = (JsonObject) jsonParser.parse(output.toString());
+            JsonArray jsonArray = jsonObject.getAsJsonObject("response").getAsJsonArray("venues");
 
             for (JsonElement jElement : jsonArray) {
                 JsonObject jObject = jElement.getAsJsonObject();
-                //System.out.println(jObject);
-                System.out.println(jObject.get("businessname"));
-                System.out.println(jObject.get("viollevel"));
-                System.out.println(jObject.get("violstatus"));
-                System.out.println(jObject.get("violdttm"));
-                System.out.println(jObject.get("comments"));
-                System.out.println(jObject.get("licenseno"));
+                System.out.println(jObject.get("name"));
             }
             conn.disconnect();
 
